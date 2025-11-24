@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Store Admin System</title>
+    <link rel="stylesheet" href="/src/main.css" />
+  </head>
+  <body>
+    <div class="min-h-screen bg-gray-50">
+      <!-- Header -->
+      <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+          <h1 class="text-3xl font-bold text-gray-900">Store Admin System</h1>
+        </div>
+      </header>
+
+      <!-- Navigation -->
+      <nav class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 flex gap-8">
+          <button
+            data-page="new-purchase"
+            class="py-3 px-1 text-sm font-medium text-gray-700 hover:text-blue-600 border-b-2 border-transparent transition"
+          >
+            New Purchase
+          </button>
+          <button
+            data-page="purchase-history"
+            class="py-3 px-1 text-sm font-medium text-gray-700 hover:text-blue-600 border-b-2 border-transparent transition"
+          >
+            Purchase History
+          </button>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- New Purchase Page -->
+        <div id="new-purchase-page" data-page-content class="space-y-6">
+          <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-2xl font-bold mb-6">Create New Purchase</h2>
+
+            <!-- Customer Selection -->
+            <div class="mb-6">
+              <div class="flex items-center gap-2 mb-2">
+                <label for="customer-select" class="block text-sm font-medium text-gray-700"
+                  >Select Customer</label
+                >
+                <button
+                  id="add-customer-btn"
+                  type="button"
+                  class="bg-green-600 text-white px-3 py-1 rounded text-sm font-medium hover:bg-green-700 transition"
+                >
+                  + Add Customer
+                </button>
+              </div>
+              <select id="customer-select" class="w-full p-2 border rounded">
+                <option value="">-- Select Customer --</option>
+              </select>
+            </div>
+
+            <!-- Product List -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-4">Products</h3>
+              <div id="product-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-gray-50 p-4 rounded mb-6">
+              <div class="flex justify-between items-center">
+                <div>
+                  <p class="text-sm text-gray-600">Total Items: <span id="item-count" class="font-bold">0</span></p>
+                  <p class="text-sm text-gray-600">Order Total: $<span id="order-total" class="font-bold">0.00</span></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              id="submit-btn"
+              class="w-full bg-blue-600 text-white py-2 px-4 rounded font-medium hover:bg-blue-700 transition"
+            >
+              Complete Purchase
+            </button>
+          </div>
+        </div>
+
+        <!-- Purchase History Page -->
+        <div id="purchase-history-page" data-page-content style="display: none" class="space-y-6">
+          <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-2xl font-bold">Purchase History</h2>
+              <button
+                id="refresh-btn"
+                class="bg-blue-600 text-white px-4 py-2 rounded font-medium hover:bg-blue-700 transition"
+              >
+                Refresh
+              </button>
+            </div>
+
+            <!-- Purchases Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse">
+                <thead>
+                  <tr class="bg-gray-100">
+                    <th class="p-3 text-left">ID</th>
+                    <th class="p-3 text-left">Customer</th>
+                    <th class="p-3 text-left">Date</th>
+                    <th class="p-3 text-left">Total</th>
+                    <th class="p-3 text-left">Status</th>
+                    <th class="p-3 text-left">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="purchases-table-body">
+                  <tr>
+                    <td colspan="6" class="text-center p-4">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Add Customer Modal -->
+      <div id="add-customer-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+          <!-- Modal Header -->
+          <div class="flex justify-between items-center p-6 border-b">
+            <h3 class="text-xl font-bold">Add New Customer</h3>
+            <button
+              id="close-modal-btn"
+              type="button"
+              class="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+            >
+              ×
+            </button>
+          </div>
+
+          <!-- Modal Body -->
+          <form id="add-customer-form" class="p-6 space-y-4 max-h-96 overflow-y-auto">
+            <div>
+              <label for="modal-name" class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <input
+                type="text"
+                id="modal-name"
+                name="name"
+                required
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="modal-email" class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <input
+                type="email"
+                id="modal-email"
+                name="email"
+                required
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="modal-phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <input
+                type="tel"
+                id="modal-phone"
+                name="phone"
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="modal-address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <input
+                type="text"
+                id="modal-address"
+                name="address"
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="modal-city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+              <input
+                type="text"
+                id="modal-city"
+                name="city"
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="modal-state" class="block text-sm font-medium text-gray-700 mb-1">State</label>
+              <input
+                type="text"
+                id="modal-state"
+                name="state"
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="modal-zipCode" class="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>
+              <input
+                type="text"
+                id="modal-zipCode"
+                name="zipCode"
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <label for="modal-country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+              <input
+                type="text"
+                id="modal-country"
+                name="country"
+                class="w-full p-2 border rounded focus:outline-none focus:border-blue-500"
+              />
+            </div>
+          </form>
+
+          <!-- Modal Footer -->
+          <div class="flex gap-2 p-6 border-t">
+            <button
+              id="submit-customer-btn"
+              type="button"
+              class="flex-1 bg-green-600 text-white py-2 px-4 rounded font-medium hover:bg-green-700 transition"
+            >
+              Add Customer
+            </button>
+            <button
+              id="cancel-modal-btn"
+              type="button"
+              class="flex-1 bg-gray-300 text-gray-800 py-2 px-4 rounded font-medium hover:bg-gray-400 transition"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
